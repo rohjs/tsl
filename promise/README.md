@@ -1,4 +1,6 @@
-## Promise Order
+# Answers
+
+### Promise Order
 
 ```sh
 > 111111
@@ -11,7 +13,7 @@
 > Apple
 ```
 
-## Tricky Promise Order
+### Tricky Promise Order
 
 ```sh
 > 111111
