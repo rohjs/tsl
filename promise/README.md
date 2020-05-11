@@ -3,10 +3,10 @@
 ```sh
 > 111111
 > 222222
-# after a second (1초 후)
+# after a second
 > setTimeout in 2
 > Banana
-# after 4 more seconds (4초 후)
+# after 4 more seconds
 > setTimeout in 1
 > Apple
 ```
@@ -16,11 +16,11 @@
 ```sh
 > 111111
 > 222222
-# after a second (1초 후)
+# after a second
 > setTimeout in 2
-# after 4 more seconds (4초 후)
+# after 4 more seconds
 > setTimeout in 1
-# after 1 more second (1초 후)
+# after 1 more second
 > Apple
 > Banana
 ```
