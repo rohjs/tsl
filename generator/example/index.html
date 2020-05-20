@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generator</title>
+  </head>
+  <body>
+    <button type="button">Click the counter</button>
+    <div id="counter"></div>
+
+    <script type="text/javascript">
+      const button = document.querySelector('button')
+      const counterBoard = document.getElementById('counter')
+
+      const counter = function* () {
+        let i = 0
+        while (true) {
+          console.log('I am before the yield', i)
+          yield i++
+          console.log('I am after the yield', i)
+        }
+      }
+
+      const gen = counter()
+
+      button.addEventListener('click', () => {
+        const nextCount = gen.next().value
+        counterBoard.textContent = nextCount
+      })
+    </script>
+  </body>
+</html>
