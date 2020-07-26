@@ -1,0 +1,15 @@
+{
+  "name": "express-201",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Roh Woohyeon <roh.woohyeon@gmail.com> (https://www.rohwoohyeon.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
