@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.static('public'))
+
 // app obj has a few methods = HTTP verbs!
 //  (mainly we use REST verbs)
 // 1. get - READ
