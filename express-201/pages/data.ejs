@@ -1,0 +1,22 @@
+<%# include head %>
+
+<h1><%= msg %></h1>
+<!-- res.locals are referenced -->
+<h1><%= locals.msg2 %></h1>
+
+<hr />
+
+<% if (validated) { %>
+  <h1><%= msg %></h1>
+<% } else { %>
+  <h1><%= msg2 %></h1>
+<% } %>
+
+<!-- '<%- %>' tells browser to interpret what's inside htmlMsg -->
+<!-- We need to trust the data coming from htmlMsg -->
+<%- htmlMsg %>
+
+<!-- This comment will not show in the browser -->
+<%# comment %>
+
+Why would anyone want to write <%% in an html file?

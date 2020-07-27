@@ -1,6 +1,8 @@
+<%- include('head.ejs') %>
+
 <% for (let i = 0; i < 10; i++) { %>
   <% if (i % 2 === 0) { text = 'blue' %>
-  <% } else { text = 'red'} %>
+  <% } else { text = 'red' } %>
   <li style='color: <%= text %>'><%= i %></li>
 
   <% if (i % 2 === 0) { %>
