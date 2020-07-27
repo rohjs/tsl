@@ -1,0 +1,17 @@
+<% for (let i = 0; i < 10; i++) { %>
+  <% if (i % 2 === 0) { text = 'blue' %>
+  <% } else { text = 'red'} %>
+  <li style='color: <%= text %>'><%= i %></li>
+
+  <% if (i % 2 === 0) { %>
+    <li>hi</li>
+  <% } else { %>
+    <li>bye</li>
+  <% } %>
+<% } %>
+
+<hr />
+
+<script>
+  for (let i = 0; i < 10; i++) document.write(`<li>${i}</li>`)
+</script>

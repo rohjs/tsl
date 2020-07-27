@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AJAX</title>
+</head>
+<body>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    const ourRequest = $.ajax({
+      method: 'POST',
+      url: 'http://localhost:3000/ajax',
+      dataType: 'json',
+      data: {
+        name: 'wh'
+      }
+    })
+
+    ourRequest
+      .then((response) => console.log(1111, response))
+      .catch(err => console.log(2222, err))
+  </script>
+</body>
+</html>
