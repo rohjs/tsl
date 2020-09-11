@@ -86,4 +86,125 @@ const crazy = new CrazyClass(); // crazy would be {hello:123}
 ### 4. lib.d.ts
 
 - ts compilation context에서 자동으로 추가된다 (=tsconfig에서 noLib 가능)
+- 일반 JavaScript 문법과 관련된 녀석들과 DOM에 있는 녀석들에 대한 타입을 제공
+- 이해함..
 
+### 5. Functions
+
+- ts팀이 function에는 각별히 신경썼다고 함
+- inline || interface 둘다 ok
+- return 타입은 보통 infer 되서 안 표기해줘도 됌, 근데 정확한 에러 확인을 위해선 해주는 게 좋음
+- return `undefined`는 `void` 쓰면 됌
+- Function overload는 런타임 오버헤드 없음: 그냥 문서용으로 굳
+- [ ] `number`를 넣으면 `number`가 나오고 `string`을 넣으면 `string`이 나온다는 건가
+```ts
+type LongHandAllowsOverloadDeclarations = {
+    (a: number): number;
+    (a: string): string;
+};
+```
+
+### 6. Callables
+
+- type, interface로 callable한 것도 정의 가능 (=interface의 인스턴스 = function)
+- arrow function은 overload 불가. 사용하려면 full syntax 사용
+```ts
+// full syntax (interface)
+interface Overloaded {
+  (foo: string): string
+  (foo: number): number
+}
+
+// full syntax (type)
+type Overloaded = {
+  (foo: string): string
+  (foo: number): number
+}
+
+function stringOrNumber (foo: string): string
+function stringOrNumber (foo: number): number
+function stringOrNumber (foo: any): any {
+  if (typeof foo === 'string') return `hello ${foo}`
+  if (typeof foo === 'number') return foo * 2
+}
+
+const overloaded: Overloaded = stringOrNumber
+
+// type annotation
+const overloaded: {
+  (foo: string): string
+  (foo: number): number
+} = stringOrNumber
+
+// arrow function
+const cantOverload: (foo: string) => string = (foo) => foo.toString()
+```
+
+### 7. Type Assertion
+
+- ts가 추론한 타입을 원하면 바꿀 수 있음: 컴파일러한테 내가 이 타입에 대해서는 너보다 잘 아니까 난리치지 말라고 하는 거
+- `as Sth` 하는게 type assertion
+- 캐스팅은 런타임에 영향을 끼치고, type assertion은 컴파일에만 적용 (only for compilers)
+- assertion은 좀 위험하다. 레거시 코드를 쉽게 ts로 옮길 수 있겐 해주지만, 완전히 type safe는 보장 못함
+- [ ] 둘 차이가 뭐지?
+```ts
+interface Foo {
+    bar: number;
+    bas: string;
+}
+
+let foo: Foo = {
+    // the compiler will provide autocomplete for properties of Foo
+};
+
+let bar = {} as Foo
+```
+- [ ] Double assertion: 둘의 차이는 MouseEvent는 Event를 더 구체적으로 명시하니까 괜찮고 HTMLElement는 Event와 아무런 상관이 없어서 안 되는거겠지?
+```ts
+function handler (event: Event) {
+    let mouseEvent = event as MouseEvent; // ok
+}
+function handler(event: Event) {
+    let element = event as HTMLElement; // not ok
+}
+function handler(event: Event) {
+  let element = event as unknown as HTMLELement; // well... ok fine (unknown 대신 any로 대체 가능)
+}
+```
+- `unknown`, `any`는 모든 타입에 호환가능
+- [ ] 이것 좀 헷갈림: S가 T의 subType이거나 T가 S의 subType이면 type assertion은 문제 없다는 것이겠지? 근데 어쨌든 이것도 그다지 권장 안 하는 건가.
+  _Basically, the assertion from type `S` to `T` succeeds if either `S` is a subtype of `T` or `T` is a subtype of `S`. This is to provide extra safety when doing type assertions_
+
+
+### 8. Freshness (=strict object literal checking)
+
+- 구조적으로는 타입 compatible하더라도 실제 object literal로 봤을 땐 compatible하지 않는 경우를 잡아낼 수 있음 = freshness
+```ts
+function logName (sth: { name: string }) {
+  console.log(sth.name)
+}
+
+// structural typing
+const wh = { name: 'wh', dateOfBirth: 930526 }
+const js = { name: 'js' }
+const falsy = { age: 100 }
+
+logName(wh) // ok (has excessive property, dateOfBirth, but fine)
+logName(js) // ok
+logName(falsy) // not ok (no name)
+
+// freshness(strict literal checking)
+logName({ name: 'wh' }) // ok
+logName({ name: 'js', age: 20 }) // Error: excessive property of "age"
+```
+
+### 9. Type Guard
+
+- 조건문에서 obj의 타입 유형을 좁힐 수 있게 도와줌
+- 타입으로 조건을 걸러냈을 때 해당 블록에 사용되는 변수의 타입을 ts는 알고 있음
+```ts
+let foo = 'hello'
+if (typeof foo === 'string') {
+  foo = 123 // Error: foo는 string이다
+}
+```
