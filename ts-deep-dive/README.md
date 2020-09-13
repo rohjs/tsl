@@ -344,3 +344,155 @@ if (typeof foo === 'string') {
   iMutateFoo(foo); // The foo argument is aliased by the foo parameter
   console.log(foo.bar); // 456!
   ```
+
+### 12. Generics
+
+- 더 의미있는 타입 디펜던시 의미를 부여하기 위해 사용: class instance members, class methods, function args, function return
+```ts
+class Queue {
+  private data = []
+  push(item) { this.data.push(item) }
+  pop() { return this.data.shift() }
+}
+
+// Dirty Queue<number> -> string, boolean 뭐 추가 될 때마다 하나씩 만들어줘야함
+class NumberQueue extends Queue {
+  private data = []
+  push(item: number) { this.super.push(item) }
+}
+
+// Generic
+class Queue<T> {
+  private data = []
+  push(item: T) { this.data.push(item) }
+  pop() { return this.data.shift()}
+}
+
+// Usage:
+const numberQueue = new Queue<number>()
+numberQueue.push(1) // ok
+numberQueue.push('yo') // nah
+```
+- [ ] 아래의 경우에는 제네릭 명시 없이 그냥 사용하면 되나?
+  ```ts
+  class Utility {
+    reverse<T>(arr: T[]) {
+      let arrToReturn = []
+      for (let i = arr.length - 1; i >= 0; i--) {
+        arrToReturn.push(arr[i])
+      }
+      return arrToReturn
+    }
+  }
+
+  const utility = new Utility()
+  utility.reverse([1, 2, 3]) // utility.reverse<number>([1, 2, 3]) 이런거 안 해줘도 되겠지?
+
+13. Type Inference
+
+- 타입을 명시적으로 주석을 달거나, 실제로 값이 assign되면 type infer가 대체로 되는 듯
+  ```ts
+  type Adder = (a: number, b: number) => number;
+  let WeirdAdder: Adder = (a, b) => { /* Do something */ } // Error
+  ```
+- 헐.. 이런 경우 foo의 리턴 값은 `any`가 됌... 왜냐하면 c가 뭔지 모르니까
+  ```ts
+  function foo(a: number, b: number) {
+      return a + addOne(b);
+  }
+  // Some external function in a library someone wrote in JavaScript
+  function addOne(c) {
+      return c + 1;
+  }
+  ```
+- 멋있는 말이군
+  > I find it simplest to always be explicit about function returns. After all, these annotations are a theorem and the function body is the proof.
+- 그래서 `noImplicitAny` 플래그를 사용해야함 ㅋㅋ
+
+14. Type Compatible
+
+- 호환가능하다: 대신 타입으로 지정가능하다 (e.g. `number` !== `string`)
+- ts는 일단 편하게 쓰이기 위해 안 견실함 - unsound한 행동이 많아서 조심해야함
+- Structural: 구조적으로 일치한다면 이름 따위는 상관 없다
+  ```ts
+  interface Point {
+    x: number
+    y: number
+  }
+  class Point2D {
+    constructor(public x: number, public y: number) { }
+  }
+  const p: Point = new Point2D(1, 2) // ㅇㅋ
+  ```
+- 객체를 인자로 던져줄 땐 불필요한 prop이 더 있어도 어케이
+  ```ts
+  interface Point2D {
+    x: number
+    y: number
+  }
+  interface Point3D {
+    x: number
+    y: number
+    z: number
+  }
+  function iTakePoint2D(point: Point2D) { console.log(point) }
+
+  const point2d: Point2D = { x: 1, y: 2 }
+  const point3d: Point3D = { x: 1, y: 2, z: 3 }
+
+  iTakePoint2D(point2d) // ㅇㅋ
+  iTakePoint2D(point3d) // ㅇㅋ (z는 안 쓰면 그만)
+  iTakePoint2D({ x: 1 }) // ㄴㄴ y 어딨음
+  ```
+- Variance: 가변성...
+
+### 15. Never
+
+- [ ] bottom type이 뭐지
+- 영원히 리턴을 안하는 경우 `never` 사용 (error / while문)
+- [ ] Exhaustive Checks에 사용된다는 게 무슨 말이지
+  ```ts
+  // 코드 자체는 이해가 되지만 그래서 이걸 왜 사용해라는 건진 모르겠음
+  function foo(x: string | number): boolean {
+    if (typeof x === "string") {
+      return true;
+    } else if (typeof x === "number") {
+      return false;
+    }
+
+    // Without a never type we would error :
+    // - Not all code paths return a value (strict null checks)
+    // - Or Unreachable code detected
+    // But because TypeScript understands that `fail` function returns `never`
+    // It can allow you to call it as you might be using it for runtime safety / exhaustive checks.
+    return fail("Unexhaustive!");
+  }
+
+  function fail(message: string): never { throw new Error(message); }
+  ```
+- 아무것도 리턴 안 하는 것은 `void`, 절대 리턴을 안 하는 것은 `never`
+- [ ] javascript는 아무 값도 리턴하지 않으면 `undefined` 리턴하는 거 아니었나
+- [ ] 이 두 코드의 차이를 모르겠음
+  ```ts
+  // Inferred return type: void
+  function failDeclaration(message: string) {
+    throw new Error(message);
+  }
+  // Inferred return type: never
+  const failExpression = function(message: string) {
+    throw new Error(message);
+  };
+  ```
+- [ ] 이 예제가 뭘 말하려고 하는지 모르겠음
+  ```ts
+  class Base {
+      overrideMe() {
+          throw new Error("You forgot to override me!");
+      }
+  }
+  class Derived extends Base {
+      overrideMe() {
+          // Code that actually returns here
+      }
+  }
+  ```
