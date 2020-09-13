@@ -437,7 +437,40 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
   iTakePoint2D(point3d) // ㅇㅋ (z는 안 쓰면 그만)
   iTakePoint2D({ x: 1 }) // ㄴㄴ y 어딨음
   ```
-- Variance: 가변성...
+- [ ] **Variance: 가변성...** 지금까지 헷갈렸던 거는 아무것도 아니라는 걸 알게 된 순간..
+- [ ] `Base`와 `Child`가 있다. `Child`는 `Base`의 자식이다 (`class Child extends Base` 뭐 그런 뜻이겠지)그럼 `Child`의 인스턴스는 Base 타입의 변수에 지정 가능하다고?
+  ```ts
+  class Base {
+    public x: number
+  }
+  class Child extends Base {
+    public y: number
+  }
+  const base: Base = new Child() // 이게 가능하다는 거지...? ㅇㅋ.... Base가 필요한 건(x) 다 갖고 있으니까...
+  ```
+- [ ] 일단 영어 해석에 어려움이 있다: `Base`랑 `Child`로 복잡하게 구성된 타입의 호환성을 따질 때는,, `Base`랑 `Child`가 유사한 상황에서 어떻게 적용될 지는 variance에 달려있다는 건가... wtf..
+  > In type compatibility of complex types composed of such Base and Child types depends on where the Base and Child in similar scenarios is driven by variance.
+  * Covariant : (co aka joint) only in same direction (디렉션이 뭔말?)
+  * Contravariant : (contra aka negative) only in opposite direction
+  * Bivariant : (bi aka both) both co and contra. (=covariant + contravariant)
+  * Invariant : if the types aren't exactly the same then they are incompatible. (=걍 틀린거)
+- [ ] 그니까 javascript처럼 mutable한 데이터를 사용하는 언어에서는 완벽하게 탄탄한 타입 시스템을 사용하려면 사실상 `invariant`만 유효하다고 할 수 있는데(나머지는 걍 incompatible한거니까), 편의를 위해서 안 탄탄한 결정을 하게 된다는 거지...?
+  > For a completely sound type system in the presence of mutable data like JavaScript, invariant is the only valid option. But as mentioned convenience forces us to make unsound choices.
+- **Function**의 경우:
+  1. 리턴 값이 요구사항만 모두 충족하면 초과해서 있어도 ㅇㅋ
+  2. 전달해야 하는 인자의 수보다 덜 전달된 건 타입상 ㅇㅋ하지만, 이상한 게 추가되는 건 용서 불가 (2번은 이해는 되지만 어이가 없음...)
+  3. optional 파라미터랑 rest파라터도 허용 (이건 더 어이 없음)
+  4. 인자의 타입은 뭔가 더 많이 봐주는 느낌이 있음... (Event, MouseEvent... 감 오니까...)
+  = 약간 요약하면: 리턴값은 본래 주기로 한 것보다 적으면 안되고, 함수한테 전달하는 argument는 부족해도 괜찮다는 거네
+- **Enum**의 경우:
+  1. enum value는 `number`와 상호호환가능
+  2. 서로 다른 enum끼리의 enum value는 (당연히) 호환 불가
+- **Class**의 경우:
+  1. 인스턴스 멤버랑 method만 비교 -> constructor, static은 무시
+  2. private과 protected는 출처가 반드시 같아야함 ㅇㅇ
+- **Generics**의 경우:
+  1. 오 신기: structural type system이기 때문에 타입이 실제로 member에 의해 사용되어야만 영향 줌 (안 사용되면 제네릭 타입이 달라도 ㅇㅋ)
+  2. 제네릭 argument가 instantiate 안되면 `any`라고 보기에 영향 없음
 
 ### 15. Never
 
