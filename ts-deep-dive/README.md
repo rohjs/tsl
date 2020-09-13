@@ -381,7 +381,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
   const utility = new Utility()
   utility.reverse([1, 2, 3]) // utility.reverse<number>([1, 2, 3]) 이런거 안 해줘도 되겠지?
 
-13. Type Inference
+### 13. Type Inference
 
 - 타입을 명시적으로 주석을 달거나, 실제로 값이 assign되면 type infer가 대체로 되는 듯
   ```ts
@@ -402,7 +402,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
   > I find it simplest to always be explicit about function returns. After all, these annotations are a theorem and the function body is the proof.
 - 그래서 `noImplicitAny` 플래그를 사용해야함 ㅋㅋ
 
-14. Type Compatible
+### 14. Type Compatible
 
 - 호환가능하다: 대신 타입으로 지정가능하다 (e.g. `number` !== `string`)
 - ts는 일단 편하게 쓰이기 위해 안 견실함 - unsound한 행동이 많아서 조심해야함
