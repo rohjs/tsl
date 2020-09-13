@@ -12,7 +12,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 - `.d.ts`로 따로 파일을 만들거나 `.ts`에 적을 수도 있지만 `.d.ts`를 권장
 - `.d.ts`로 파일을 시작할 경우 파일의 시작은 `declare`로 되어야 함
 - [ ] 이게 무슨 뜻이지?
-  _This helps make it clear to the author that **there will be no code emitted by TypeScript**. The author needs to ensure that the declared item will exist at runtime._
+  > This helps make it clear to the author that **there will be no code emitted by TypeScript**. The author needs to ensure that the declared item will exist at runtime.
 - [ ] 어쨌든 third party 라이브러리를 사용하려고 하는데 type definition이 없으면 런타임에서 에러를 띄운다는 거지?
 - [ ] 런타임에 declaration이 필요하다는 것과 ts에 의해 방출되는 코드가 없다는 게 뜻이 상충되는 것 아닌가
 
@@ -21,7 +21,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 - [ ] declaration file이랑 `declare var`이 무슨 차이인지 모르겠음
 - [ ] `declare`를 쓰는 거랑 `interface`를 쓰는 거랑 뭔 차이?
 - [ ] `declare` 한 것들은 다 global하게 사용되나?
-- [ ] 여기 나오는 예제는 무슨 뜻인지 이해 0도 안됌
+- [ ] 여기 나오는 예제는 무슨 뜻인지 이해 1도 안됌
   ```ts
   interface Process {
     exit(code?: number): void;
@@ -83,7 +83,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 
 - ts compilation context에서 자동으로 추가된다 (=tsconfig에서 noLib 가능)
 - 일반 JavaScript 문법과 관련된 녀석들과 DOM에 있는 녀석들에 대한 타입을 제공
-- 이해함..
+- 번역하면서 다 이해함..
 
 ### 5. Functions
 
@@ -241,7 +241,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
   doStuff({ foo: 123, common: '123' });
   doStuff({ bar: 123, common: '123' });
   ```
-- [ ] 이건 정말 이해가 안 됌.
+- [ ] 이건 정말 wtf임
   ```ts
   // Example Setup
   declare var foo:{bar?: {baz: string}};
@@ -322,7 +322,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 - index signature에도 readonly 적용 가능 -> key에 따른 value 못바꿈 (?)
 - `ReadonlyArray<T>`도 있음 -> 한번 선언 하면 영원히 끝임
 - [ ] `readonly`는 property를 위해서라는 건 알겠는데, aliasing으로 수정될 수 있다는 게 무슨 말이지?
-  `readonly` is 1) for a property, 2) the property can be modified because of aliasing
+  > `readonly` is 1) for a property, 2) the property can be modified because of aliasing
   ```ts
   let foo: {
     readonly bar: number;
@@ -400,7 +400,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
   ```
 - 멋있는 말이군
   > I find it simplest to always be explicit about function returns. After all, these annotations are a theorem and the function body is the proof.
-- 그래서 `noImplicitAny` 플래그를 사용해야함 ㅋㅋ
+- 저런 무시무시한 any 지옥을 겪고 싶지 않으면 `noImplicitAny` 플래그를 사용해야함 ㅋㅋ
 
 ### 14. Type Compatible
 
