@@ -22,14 +22,12 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 - [ ] `declare`를 쓰는 거랑 `interface`를 쓰는 거랑 뭔 차이?
 - [ ] `declare` 한 것들은 다 global하게 사용되나?
 - [ ] 여기 나오는 예제는 무슨 뜻인지 이해 0도 안됌
-
   ```ts
   interface Process {
     exit(code?: number): void;
   }
   declare var process: Process;
   ```
-
   ```ts
   interface Process {
     exitWithLogging(code?: number): void;
@@ -47,7 +45,6 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 - `class`는 `interface`를 구현 가능.
 - `class`를 만드는데 특정 `interface`에 선언된 타입 구조를 반드시 따라야할 때, `implements`를 사용해서 그 관계를 더 정확하게 표현 가능 (`class Sth implements SthInterface`)
 - [ ] 아래 예제 이해 불가
-
   ```ts
   interface Crazy {
     new (): {
@@ -56,7 +53,6 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
   }
   // Crazy interface에는 { hello: number }를 리턴하는 new라는 함수가 있어야 한다
   ```
-
   ```ts
   class CrazyClass implements Crazy {
     constructor() {
@@ -114,13 +110,11 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
     (foo: string): string
     (foo: number): number
   }
-
   // full syntax (type)
   type Overloaded = {
     (foo: string): string
     (foo: number): number
   }
-
   function stringOrNumber (foo: string): string
   function stringOrNumber (foo: number): number
   function stringOrNumber (foo: any): any {
@@ -131,7 +125,6 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
       return foo * 2
     }
   }
-
   const overloaded: Overloaded = stringOrNumber
 
   // type annotation
@@ -163,7 +156,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 
   let bar = {} as Foo
   ```
-  - [ ] Double assertion: 둘의 차이는 MouseEvent는 Event를 더 구체적으로 명시하니까 괜찮고 HTMLElement는 Event와 아무런 상관이 없어서 안 되는거겠지?
+- [ ] Double assertion: 둘의 차이는 MouseEvent는 Event를 더 구체적으로 명시하니까 괜찮고 HTMLElement는 Event와 아무런 상관이 없어서 안 되는거겠지?
   ```ts
   function handler (event: Event) {
       let mouseEvent = event as MouseEvent; // ok
@@ -175,14 +168,14 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
     let element = event as unknown as HTMLELement; // well... ok fine (unknown 대신 any로 대체 가능)
   }
   ```
-  - `unknown`, `any`는 모든 타입에 호환가능
-  - [ ] 이것 좀 헷갈림: S가 T의 subType이거나 T가 S의 subType이면 type assertion은 문제 없다는 것이겠지? 근데 어쨌든 이것도 그다지 권장 안 하는 건가.
-    _Basically, the assertion from type `S` to `T` succeeds if either `S` is a subtype of `T` or `T` is a subtype of `S`. This is to provide extra safety when doing type assertions_
+- `unknown`, `any`는 모든 타입에 호환가능
+- [ ] 이것 좀 헷갈림: S가 T의 subType이거나 T가 S의 subType이면 type assertion은 문제 없다는 것이겠지? 근데 어쨌든 이것도 그다지 권장 안 하는 건가.
+  > Basically, the assertion from type `S` to `T` succeeds if either `S` is a subtype of `T` or `T` is a subtype of `S`. This is to provide extra safety when doing type assertions
 
 
-  ### 8. Freshness (=strict object literal checking)
+### 8. Freshness (=strict object literal checking)
 
-  - 구조적으로는 타입 compatible하더라도 실제 object literal로 봤을 땐 compatible하지 않는 경우를 잡아낼 수 있음 = freshness
+- 구조적으로는 타입 compatible하더라도 실제 object literal로 봤을 땐 compatible하지 않는 경우를 잡아낼 수 있음 = freshness
   ```ts
   function logName (sth: { name: string }) {
     console.log(sth.name)
@@ -206,12 +199,12 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
 
 - 조건문에서 obj의 타입 유형을 좁힐 수 있게 도와줌
 - 타입으로 조건을 걸러냈을 때 (`typeof`, `instanceof`) 해당 블록에 사용되는 변수의 타입을 ts는 알고 있음
-```ts
-let foo = 'hello'
-if (typeof foo === 'string') {
-  foo = 123 // Error: foo는 string이다
-}
-```
+  ```ts
+  let foo = 'hello'
+  if (typeof foo === 'string') {
+    foo = 123 // Error: foo는 string이다
+  }
+  ```
 - `in`으로도 타입 체크 가능
 - union 타입도 걸러냄
 - object의 경우 `instanceof`나 `typeof` 같은 걸로 체크 못하는데 ts에서는 User Defined Type Guard functions로 가능
@@ -248,7 +241,7 @@ if (typeof foo === 'string') {
   doStuff({ foo: 123, common: '123' });
   doStuff({ bar: 123, common: '123' });
   ```
-  - [ ] 이건 정말 이해가 안 됌.
+- [ ] 이건 정말 이해가 안 됌.
   ```ts
   // Example Setup
   declare var foo:{bar?: {baz: string}};
@@ -264,24 +257,24 @@ if (typeof foo === 'string') {
   }
   ```
 
-  ### 10. Literal Types
+### 10. Literal Types
 
-  - primitive의 값 자체를 타입으로 사용할 수 있음
-  - 하나로 사용될 때는 무의미하지만 union type으로 사용하면 막강해짐
-    ```ts
-    type Direction =
-      | 'North'
-      | 'East'
-      | 'South'
-      | 'West
+- primitive의 값 자체를 타입으로 사용할 수 있음
+- 하나로 사용될 때는 무의미하지만 union type으로 사용하면 막강해짐
+  ```ts
+  type Direction =
+    | 'North'
+    | 'East'
+    | 'South'
+    | 'West
 
-    function move(distance: number, direction: Direction) {
-      // do sth
-    }
+  function move(distance: number, direction: Direction) {
+    // do sth
+  }
 
-    move(1, 'North') // ok
-    move(1, 'Go home') // nah
-    ```
+  move(1, 'North') // ok
+  move(1, 'Go home') // nah
+  ```
 - literal type을 type으로 사용하면 좀 strict하게 된다. 이럴 때는 type assertion을 사용하거나, 타입 annotation을 따로 달거나 해서 ts 에러를 해결한다
 - enum은 숫자 기반이다. 문자 리터럴과 `union` 타입을 이용하면 string 기반 enum 같은 걸 만들 수 있다 (K:V)
   ```ts
@@ -348,31 +341,31 @@ if (typeof foo === 'string') {
 ### 12. Generics
 
 - 더 의미있는 타입 디펜던시 의미를 부여하기 위해 사용: class instance members, class methods, function args, function return
-```ts
-class Queue {
-  private data = []
-  push(item) { this.data.push(item) }
-  pop() { return this.data.shift() }
-}
+  ```ts
+  class Queue {
+    private data = []
+    push(item) { this.data.push(item) }
+    pop() { return this.data.shift() }
+  }
 
-// Dirty Queue<number> -> string, boolean 뭐 추가 될 때마다 하나씩 만들어줘야함
-class NumberQueue extends Queue {
-  private data = []
-  push(item: number) { this.super.push(item) }
-}
+  // Dirty Queue<number> -> string, boolean 뭐 추가 될 때마다 하나씩 만들어줘야함
+  class NumberQueue extends Queue {
+    private data = []
+    push(item: number) { this.super.push(item) }
+  }
 
-// Generic
-class Queue<T> {
-  private data = []
-  push(item: T) { this.data.push(item) }
-  pop() { return this.data.shift()}
-}
+  // Generic
+  class Queue<T> {
+    private data = []
+    push(item: T) { this.data.push(item) }
+    pop() { return this.data.shift()}
+  }
 
-// Usage:
-const numberQueue = new Queue<number>()
-numberQueue.push(1) // ok
-numberQueue.push('yo') // nah
-```
+  // Usage:
+  const numberQueue = new Queue<number>()
+  numberQueue.push(1) // ok
+  numberQueue.push('yo') // nah
+  ```
 - [ ] 아래의 경우에는 제네릭 명시 없이 그냥 사용하면 되나?
   ```ts
   class Utility {
