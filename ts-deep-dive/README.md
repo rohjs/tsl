@@ -676,6 +676,7 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
   }
   ```
 
+
 ### 18. Moving Types
 
 - [ ] 타입을 옮겨서 쓰고 싶을 때는 import를 사용해야 함
