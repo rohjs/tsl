@@ -4,4 +4,3 @@ node_modules/
 # Etc
 .DS_Store
 .prettierrc
-*.log
