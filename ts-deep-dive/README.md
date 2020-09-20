@@ -675,7 +675,6 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
     // isValid가 [fieldName: string]의 조건에 부합하니깐 그런건가.. (즉 isValid를 fieldName으로 본거지)
   }
   ```
-gg
 
 ### 18. Moving Types
 
