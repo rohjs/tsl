@@ -291,6 +291,14 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
     'South',
     'West'
   ])
+  /**
+  const Direction = {
+    North: 'North',
+    East: 'East',
+    South: 'South',
+    West: 'West'
+  }
+  */
 
   type Direction = keyof typeof Direction
 
@@ -522,3 +530,162 @@ ambient declaration은 다른 js 라이브러리도 손쉽게 ts 프로젝트에
       }
   }
   ```
+
+### 16. Discriminated Unions
+
+- 오호. 클래스 멤버 중 리터럴 값이 있으면 Union 멤버들 간에 쉽게 구분 가능하다고 하네 (예시 보면 이해 됌)
+  ```ts
+  class Square {
+    kind: 'square'
+    size: number
+  }
+  class Rectangle {
+    kind: 'rectangle'
+    width: number
+    height: number
+  }
+  type Shape = Square | Rectangle
+
+  function getArea(s: Shape) {
+    if (s.kind === 'square') {
+      // 여기는 무조건 Square다
+    } else if (s.kind === 'rectangle') {
+      // 여기는 무조건 Rectangle이다
+    }
+  }
+  ```
+- [ ] 제대로 이해한 건지는 모르겠지만 이런 뜻인가?
+  ```ts
+    /**
+      원래 Shape는 이런 놈이었다.
+    */
+    class Square {
+      kind: 'square'
+      // and so on...
+    }
+    class Rectangle {
+      kind: 'rectangle'
+      // and so on...
+    }
+
+    type Shape = Square | Rectangle | Circle
+
+    /**
+      그런데 누군가 mysteriously Circle을 만들고 Shape에 추가한거지
+    */
+    class Circle {
+      kind: 'circle'
+      // and so on...
+    }
+    type Shape = Square | Rectangle | Circle
+
+    /**
+      만약 square, rectangle만 대응하고 circle에 대해서는 대응안하면? buggy한 요소가 보인다.
+    */
+    function getArea(s: Shape) {
+      if (s.kind === 'square') {
+        // 여기는 무조건 Square다
+      } else if (s.kind === 'rectangle') {
+        // 여기는 무조건 Rectangle이다
+      }
+      // circle일 경우에는 어또케요?
+    }
+
+     /**
+      이런 상황에서 ts가 우리에게 미리 에러를 알려줬으면 좋지 않을까? (ts: 얌마 너 circle 대응 안했어)
+      그럴 때 never를 지정해봅세
+    */
+
+    function getAreaUpdated(s: Shape) {
+      if (s.kind === 'square') {
+        // 여기는 무조건 Square다
+      } else if (s.kind === 'rectangle') {
+        // 여기는 무조건 Rectangle이다
+      } else {
+        /**
+          여기서 에러가 baam 터지는 거지, 왜냐?
+          circle의 경우 대응 안 했는데 circle을 never 타입을 받느 _exhaustiveCheck에 넣어라는 건 말도 안되는 소리!
+        */
+        const _exhaustiveCheck: never = s
+      }
+    }
+
+    function getAreaFinal(s: Shape) {
+      if (s.kind === 'square') {
+        // 여기는 무조건 Square다
+      } else if (s.kind === 'rectangle') {
+        // 여기는 무조건 Rectangle이다
+      } else if (s.kind === 'circle') {
+        // 여기는 무조건 Circle이다
+      }else {
+        /**
+          여기서 에러가 baam 터지는 거지, 왜냐?
+          circle의 경우 대응 안 했는데 circle을 never 타입을 받느 _exhaustiveCheck에 넣어라는 건 말도 안되는 소리!
+        */
+        const _exhaustiveCheck: never = s
+      }
+    }
+  ```
+
+### 17. Index Signatures
+
+- js의 객체는 string으로 access 가능
+- js 객체에 접근하기 위한 index는 내부적으로 무조건 stringify를 거침 -> ts는 이걸 싫어하심..
+- ts는 그래서 무조건 index signature를 stringify하기를 강요함 (number는 ㅇㅋ)
+- [ ] 이게 무슨 말이여. 예시는 왜 틀린거여
+  > As soon as you have a string index signature, all explicit members must also conform to that index signature. This is shown below:
+  ```ts
+  /** Okay */
+  interface Foo {
+    x: number
+    y: number
+  }
+  /** Not Okay */
+  interface Bar {
+    x: number
+    y: string // ERROR: Property `y` must be of type number (<- 아니 대체 왜??????)
+  }
+  ```
+- [ ] 일단... index signature는 `number`랑 `string`만 허용하고, 그러다보니까 다른 property랑 좀 혼선이 있을 수 있는 것 같아... 그래서 조심해야 하는데... 내가 이해한 게 맞는지... [참고링크](Excluding certain properties from the index signature)
+  ```ts
+  type FieldState {
+    value: string
+  }
+
+  type FormState =
+    { isValid: boolean }
+    & { [fieldName: string]: FieldState }
+  /**
+    그럼 FormState는 대충 이런 모습인건가
+    const formState: FormState = {
+      isValid: true,
+      randomField: {
+        value: 'yo'
+      }
+    }
+  */
+
+  declare const foo: FormState // <- btw, 여기 왜 declare를 굳이 써야하지?
+  const isValidBoolean = foo.isValid
+  const somethingFieldState = foo['something']
+
+  const bar: FormState = {
+    isValid: true
+    // Error가 뜨는데, isValid는 FieldState에 assign할 수 없다고 뜨는데.. 그 이유는
+    // isValid가 [fieldName: string]의 조건에 부합하니깐 그런건가.. (즉 isValid를 fieldName으로 본거지)
+  }
+  ```
+
+### 18. Moving Types
+
+- [ ] 타입을 옮겨서 쓰고 싶을 때는 import를 사용해야 함
+  * 단, 해당 타입은 namespace나 module안에 잇어야 임포트 가능
+  * 그리고 타입이자 변수인 녀석들만 가능...? 그럼 Class나 enum같은 것만 가능하다는 거 아냐?
+
+```ts
+export interface PrismyPureMiddleware {
+  (context: Context): (
+    next: () => Promise<ResponseObject<any>>
+  ) => Promise<ResponseObject<any>>
+}
+```
