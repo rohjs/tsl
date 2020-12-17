@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <div><strong style="color: red">click me</strong> to start event flow</div>
+    <script>
+      var body = document.body
+      var div = document.querySelector('div')
+      body.addEventListener('click', function (e) {
+        console.log(e.currentTarget)
+      })
+      window.addEventListener('click', function (e) {
+        console.log(e.currentTarget)
+      })
+    </script>
+  </body>
+</html>
